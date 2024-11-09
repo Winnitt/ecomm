@@ -64,4 +64,20 @@ pipeline {
             echo 'Build or deployment failed!'
         }
     }
+
+
+    stage('Parallel Tasks') {
+    parallel {
+        task1: {
+            // Task 1 commands
+        },
+        task2: {
+            // Task 2 commands
+        }
+    }
 }
+
+}
+
+
+
