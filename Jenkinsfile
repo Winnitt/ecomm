@@ -48,6 +48,20 @@ pipeline {
                 }
             }
         }
+
+        // Add a new stage for parallel tasks
+        stage('Parallel Tasks') {
+            parallel {
+                task1: {
+                    // Task 1 commands (e.g., another set of tests or deployments)
+                    echo 'Running task 1'
+                },
+                task2: {
+                    // Task 2 commands
+                    echo 'Running task 2'
+                }
+            }
+        }
     }
 
     post {
@@ -64,20 +78,4 @@ pipeline {
             echo 'Build or deployment failed!'
         }
     }
-
-
-    stage('Parallel Tasks') {
-    parallel {
-        task1: {
-            // Task 1 commands
-        },
-        task2: {
-            // Task 2 commands
-        }
-    }
 }
-
-}
-
-
-
