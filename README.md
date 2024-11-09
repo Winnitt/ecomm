@@ -18,3 +18,5 @@ This is a basic backend e-commerce application built with Node.js, Express, and 
 - **middlewares/**: Includes middleware functions, such as authentication.
 - **models/**: Defines Mongoose schemas and models for MongoDB collections.
 - **routes/**: Defines API endpoints and maps them to controller functions.
+# This is a test change to trigger Jenkins
+# Best PROJECT EVER
