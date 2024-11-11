@@ -16,33 +16,25 @@ pipeline {
 
         stage('Install Dependencies') {
             steps {
-                script {
-                    sh 'npm install'
-                }
+                powershell 'npm install'
             }
         }
 
         stage('Run Tests') {
             steps {
-                script {
-                    sh 'npm test'
-                }
+                powershell 'npm test'
             }
         }
 
         stage('Build Docker Image') {
             steps {
-                script {
-                    sh 'docker build -t $DOCKER_IMAGE .'
-                }
+                powershell 'docker build -t $DOCKER_IMAGE .'
             }
         }
 
         stage('Run Docker Tests') {
             steps {
-                script {
-                    sh 'docker run --rm $DOCKER_IMAGE npm test'
-                }
+                powershell 'docker run --rm $DOCKER_IMAGE npm test'
             }
         }
 
@@ -50,14 +42,13 @@ pipeline {
             steps {
                 script {
                     withCredentials([usernamePassword(credentialsId: DOCKER_CREDENTIALS_ID, usernameVariable: 'DOCKER_USERNAME', passwordVariable: 'DOCKER_PASSWORD')]) {
-                        sh "echo $DOCKER_PASSWORD | docker login --username $DOCKER_USERNAME --password-stdin"
-                        sh 'docker push $DOCKER_IMAGE'
+                        powershell "echo $DOCKER_PASSWORD | docker login --username $DOCKER_USERNAME --password-stdin"
+                        powershell 'docker push $DOCKER_IMAGE'
                     }
                 }
             }
         }
 
-        // Corrected Parallel Tasks Stage
         stage('Parallel Tasks') {
             parallel {
                 stage('Task 1') {
