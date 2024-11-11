@@ -3,6 +3,8 @@ pipeline {
 
     environment {
         NODE_ENV = 'production'  // Set environment variable (optional)
+        DOCKER_IMAGE = 'your-dockerhub-username/ecomm-app:1.0.0'  // Docker image name and tag
+        DOCKER_CREDENTIALS_ID = 'docker-hub-credentials-id'  // Docker credentials ID in Jenkins
     }
 
     stages {
@@ -31,36 +33,49 @@ pipeline {
             }
         }
 
-        stage('Build') {
+        stage('Build Docker Image') {
             steps {
-                // Run the build script (if any)
                 script {
-                    sh 'npm run build'  // Ensure you have a build script in package.json
+                    // Build the Docker image
+                    sh 'docker build -t $DOCKER_IMAGE .'  // Build Docker image
                 }
             }
         }
 
-        stage('Deploy') {
+        stage('Run Docker Tests') {
             steps {
-                // Deploy the app (this could be any deploy command based on your setup)
                 script {
-                    sh 'npm run deploy'  // Make sure you have a deploy script in package.json
+                    // Run tests inside the Docker container (if necessary)
+                    sh 'docker run --rm $DOCKER_IMAGE npm test'
                 }
             }
         }
 
-        // Add a new stage for parallel tasks
+        stage('Deploy Docker Image') {
+            steps {
+                script {
+                    // Login to Docker Hub and push the image (requires Docker credentials set in Jenkins)
+                    withCredentials([usernamePassword(credentialsId: DOCKER_CREDENTIALS_ID, usernameVariable: 'DOCKER_USERNAME', passwordVariable: 'DOCKER_PASSWORD')]) {
+                        sh "echo $DOCKER_PASSWORD | docker login --username $DOCKER_USERNAME --password-stdin"
+                        sh 'docker push $DOCKER_IMAGE'  // Push the Docker image to Docker Hub
+                    }
+                }
+            }
+        }
+
         stage('Parallel Tasks') {
-            parallel {
+            parallel (
                 task1: {
-                    // Task 1 commands (e.g., another set of tests or deployments)
-                    echo 'Running task 1'
+                    steps {
+                        echo 'Running task 1'
+                    }
                 },
                 task2: {
-                    // Task 2 commands
-                    echo 'Running task 2'
+                    steps {
+                        echo 'Running task 2'
+                    }
                 }
-            }
+            )
         }
     }
 
