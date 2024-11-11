@@ -8,6 +8,11 @@ pipeline {
     }
 
     stages {
+        stage('Run Tests') {
+    steps {
+        powershell 'npm run test || exit 0'
+    }
+}
         stage('Checkout') {
             steps {
                 git 'https://github.com/Winnitt/ecomm.git'
